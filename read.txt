@@ -1,0 +1,9 @@
+Librerie necessarie:
+-shapely
+-nltk
+-pandas 
+-numpy 
+-re
+-ast
+-matplotlib.pyplot
+-scipy.stats
