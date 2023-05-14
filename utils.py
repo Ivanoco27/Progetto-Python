@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import re
+import nltk
+# nltk.download('stopwords')
 from nltk.corpus import stopwords
 from collections import Counter
 import ast
@@ -10,6 +12,8 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 from scipy.stats import chi2_contingency
 import itertools
+import numpy as np
+from numpy import sin, cos, arccos, pi, round
 
 def read_csv_file(file_path):
     """
@@ -116,23 +120,6 @@ def add_counts_col(df, cols):
     print(df.info())
     return df
 
-def make_point(df, lat_col, lon_col):
-    """
-    Crea una nuova colonna che contiene le coordinate latitudine e longitudine in formato Point.
-
-    Args:
-        df (pandas.DataFrame): il dataframe di partenza.
-        lat_col (str): il nome della colonna contenente le latitudini.
-        lon_col (str): il nome della colonna contenente le longitudini.
-
-    Returns:
-        pandas.DataFrame: il dataframe con la nuova colonna contenente le coordinate in formato Point.
-    """
-    # Crea la nuova colonna contenente le coordinate in formato Point
-    df['coordinates'] = df.apply(lambda row: Point(row[lon_col], row[lat_col]), axis=1)
-    
-    print(df.info())
-    return df
 
 def remove_outliers(df, column_name):
     """
@@ -386,3 +373,25 @@ def golden_word(df1, df2, col, p_value = 0.05):#era
 
     return df
 
+#insieme di funzioni per trovare distanza date 2 coordinate terrestri
+#si basa sulla formula di Haversine, a differenza della distanza euclidea,
+#tiene conto della curvatura terrestre attraverso la trigonometria
+
+#restiuisce, date due coordinate, la distanza in metri approssimata a due decimali 
+
+def rad2deg(radians):
+    degrees = radians * 180 / pi
+    return degrees
+
+def deg2rad(degrees):
+    radians = degrees * pi / 180
+    return radians
+
+def distanza(latitude1, longitude1, latitude2, longitude2):
+    theta = longitude1 - longitude2
+    distance = 60 * 1.1515 * rad2deg(
+        arccos(
+            (sin(deg2rad(latitude1)) * sin(deg2rad(latitude2))) + 
+            (cos(deg2rad(latitude1)) * cos(deg2rad(latitude2)) * cos(deg2rad(theta)))
+        ))
+    return round(distance * 1609.344, 2) 
